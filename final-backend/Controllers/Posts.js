@@ -4,7 +4,7 @@ import User from "../Models/User.js";
 
 export const createPost = async (req, res) => {
     try {
-      const { description, image, location, userId, categoryId } = req.body;
+      const { userId,description, location, categoryId } = req.body;
   
 
       // const user = await User.findById(userId);
@@ -15,7 +15,7 @@ export const createPost = async (req, res) => {
   
       const newPost = new Posts({
         description,
-        image,
+        image:req.file.path,
         location,
         userId,
         categoryId
@@ -82,7 +82,7 @@ export const createPost = async (req, res) => {
   export const deletePostById = async(req, res)=>{
     const { id } = req.params
     try {
-      const deletedPost = await Posts.findById(id)
+      const deletedPost = await Posts.findByIdAndDelete(id)
       if(!deletedPost){
         return res.status(404).json("post not found")
 
