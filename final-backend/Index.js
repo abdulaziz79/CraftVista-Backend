@@ -11,6 +11,7 @@ import dotenv from "dotenv"
 import CategoryRouter from "./Routes/Category.js";
 import { logOut } from "./Middlewares/authentication.js";
 import postRoutes from "./Routes/Posts.js";
+import Rate from "./Routes/Rate.js";
 dotenv.config()
 
 
@@ -44,4 +45,5 @@ app.post('/login', login)
 app.post("/logout", logOut);
 app.use("/category", CategoryRouter)
 app.use("/post", postRoutes)
+app.use("/rate", Rate)
 app.use('/images',express.static('images'))

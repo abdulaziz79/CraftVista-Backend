@@ -1,4 +1,4 @@
-import e from "express";
+// import e from "express";
 import Posts from "../Models/Posts.js";
 import User from "../Models/User.js";
 
@@ -12,14 +12,17 @@ export const createPost = async (req, res) => {
       // if (!user) {
       //   return res.status(404).json({ message: 'User not found' });
       // }
-  
+  let img=null;
+      if(req.file){
+img=req.file.path
+      }
       const newPost = new Posts({
         description,
-        image:req.file.path,
+        image: img,
         location,
         userId,
         categoryId
-      });
+      })
         const savedPost = await newPost.save();
 
       res.status(201).json(savedPost);
@@ -34,7 +37,7 @@ export const createPost = async (req, res) => {
  
       const workers = await User.find({ role: 'worker' });
       const workerUserIds = workers.map(worker => worker._id);
-      const workerPosts = await Posts.find({ userId: { $in: workerUserIds } }).populate("userId");
+      const workerPosts = await Posts.find({ userId: { $in: workerUserIds } }).sort({createdAt:-1}).populate("userId");
       console.log(workerPosts)
    return   res.json(workerPosts);
     } catch (error) {
@@ -48,7 +51,7 @@ export const createPost = async (req, res) => {
     try {
       const users= await User.find({role: "user"})
       const usersUserId = users.map(user=> user._id)
-      const userPosts = await Posts.find({userId: {$in: usersUserId}}).populate("userId")
+      const userPosts = await Posts.find({userId: {$in: usersUserId}}).sort({createdAt:-1}).populate("userId")
       res.json(userPosts);
     } catch (error) {
       console.error(error);
@@ -60,7 +63,7 @@ export const createPost = async (req, res) => {
   export const getByUserId = async (req, res) => {
     const id=req.params.id
     try {
-      const userPosts= await Posts.find({userId: id}).populate("categoryId")
+      const userPosts= await Posts.find({userId: id}).sort({createdAt:-1}).populate("categoryId")
       // const usersUserId = users.map(user=> user._id)
       // const userPosts = await Posts.find({userId: {$in: usersUserId}}).populate("userId")
       res.json(userPosts);
@@ -73,7 +76,9 @@ export const createPost = async (req, res) => {
   export const getAllPosts = async (req, res)=>{
     try {
       const users= await Posts.find()
-      res.status(200).json(users)
+      if(users){
+        res.status(200).json(users)
+      }
     } catch (error) {
       res.status(404).json(error.message)
     }
