@@ -51,7 +51,7 @@ img=req.file.path
     try {
       const users= await User.find({role: "user"})
       const usersUserId = users.map(user=> user._id)
-      const userPosts = await Posts.find({userId: {$in: usersUserId}}).sort({createdAt:-1}).populate("userId")
+      const userPosts = await Posts.find({userId: {$in: usersUserId}}).sort({createdAt:-1}).populate(["userId", "categoryId"])
       res.json(userPosts);
     } catch (error) {
       console.error(error);

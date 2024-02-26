@@ -6,8 +6,9 @@ import Rate from "../Models/Rate.js";
 
 export const userController={
     register:async(req,res)=>{
-        const {name, email, isWorker, password, location, phone, selectedCategory}=req.body;
+        const {name, email, password, location, phone, selectedCategory}=req.body;
         const image = req.file?.path
+        const isWorker = req.body.isWorker === 'true'; 
         console.log(req.body)
 
 
@@ -17,7 +18,7 @@ export const userController={
             }
             const existingUser= await User.findOne({email});
             if(existingUser){
-                return res.status(400).json({ error: "Email already exists" });
+                return res.status(401).json({ error: "Email already exists" });
             }
             const salt = 10;
             const hashedPass= await bcrypt.hash(password, salt);
@@ -26,7 +27,7 @@ export const userController={
                 email,
                 role: isWorker ? "worker" : "user",
                 image:image || null,
-                location:location || null,
+                location:location ||  null,
                 phone:phone || null,
                 categoryId: selectedCategory || null,
                 password:hashedPass
@@ -34,7 +35,7 @@ export const userController={
             await newUser.save()
             const isSecure= process.env.NODE_ENV === "production"
             // console.log("SECRET_TOKEN:", process.env.SECRET_TOKEN);
-            const token = jwt.sign({ userId:newUser._id, role: newUser.role, email, name},process.env.SECRET_KEY, { expiresIn: '24h' })
+            const token = jwt.sign({ userId:newUser._id, role: newUser.role, email:newUser.email, name:newUser.name ,location:newUser.location,image:newUser.image,phone:newUser.phone,categoryId:newUser.categoryId,},process.env.SECRET_KEY, { expiresIn: '24h' })
             res.cookie("token", token, { httpOnly: true, secure:isSecure, sameSite: 'None'});
 
             res.status(201).json(newUser)
