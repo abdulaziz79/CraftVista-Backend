@@ -1,6 +1,10 @@
 // import e from "express";
 import Posts from "../Models/Posts.js";
 import User from "../Models/User.js";
+import mongoose from "mongoose";
+
+import Category from "../Models/Category.js"; // Import the Category model
+
 
 export const createPost = async (req, res) => {
     try {
@@ -75,7 +79,7 @@ img=req.file.path
 
   export const getAllPosts = async (req, res)=>{
     try {
-      const users= await Posts.find()
+      const users= await Posts.find().populate(["userId","categoryId"])
       if(users){
         res.status(200).json(users)
       }
@@ -124,3 +128,59 @@ img=req.file.path
    }
   }
   
+ 
+export const getByFilter = async (req, res) => {
+  const { category, location, role } = req.query;
+  try {
+    const pipeline = [
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      {
+        $match: {
+          "user.role": role
+        }
+      }
+    ];
+
+    // Optionally add $match stage based on categoryId if provided
+    if (category) {
+      pipeline.push({
+        $match: {
+          "category._id": new mongoose.Types.ObjectId(category)
+        }
+      });
+    }
+
+    // Optionally add additional $match stage based on location
+    if (location) {
+      pipeline.push({
+        $match: {
+          location: location
+        }
+      });
+    }
+
+    const posts = await Posts.aggregate(pipeline);
+    if (posts) {
+      return res.status(200).json(posts);
+    } else {
+      return res.status(404).json({ message: "Not Found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

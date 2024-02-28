@@ -1,6 +1,6 @@
 import  express from "express";
 import uploadImage from "../Middlewares/multer.js";
-import { createPost, getAllUserPosts, getAllWorkerPosts, getAllPosts, getByUserId , deletePostById} from "../Controllers/Posts.js";
+import { createPost, getAllUserPosts, getAllWorkerPosts, getAllPosts, getByUserId , deletePostById, getByFilter} from "../Controllers/Posts.js";
 
 const postRoutes = express.Router();
 
@@ -9,6 +9,7 @@ postRoutes.get("/readUserPosts", getAllUserPosts)
 postRoutes.get("/readWorkerPosts", getAllWorkerPosts)
 postRoutes.get("/readPosts", getAllPosts)
 postRoutes.get("/readPosts/:id", getByUserId)
+postRoutes.post("/filter", getByFilter)
 postRoutes.delete("/delete/:id", deletePostById)
 
 

@@ -70,7 +70,9 @@ export const userController={
             res.status(404).json({ message: "User not found" });
             return;
           }
-          res.status(200).json(user);
+          const averageRate = await getAverageRateForUser(user._id);
+          const userWithRate = {...user.toJSON() , averageRate : averageRate.averageRating , number : averageRate.totalRatings }
+          res.status(200).json(userWithRate);
         } catch (error) {
           res.status(500).json({ message: "key one" + error.message });
         }
@@ -133,4 +135,31 @@ export const getAllWorkerss = async (req, res) => {
   }
 }
 
+
 export default userController;
+
+export const getByFilter = async (req, res) => {
+  const { category, location } = req.query; // Accessing query parameters
+  console.log(req.query); // Logging query parameters for debugging
+  
+  const filterBy = {};
+  
+  if (category) {
+    filterBy.categoryId = category;
+  }
+  
+  if (location) {
+    filterBy.location = { $regex: new RegExp(location, 'i') };
+  }
+  
+  try {
+    const users = await User.find(filterBy);
+    if (users.length > 0) { // Check if users array is not empty
+      return res.status(200).json(users);
+    } else {
+      return res.status(404).json({ message: "Not Found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}

@@ -2,7 +2,7 @@ import express from "express"
 import userController from "../Controllers/User.js"
 import uploadImage from "../Middlewares/multer.js";
 import { verifyToken, checkRole } from "../Middlewares/authentication.js"
-import {getAllWorkerss} from "../Controllers/User.js"
+import {getAllWorkerss,getByFilter} from "../Controllers/User.js"
 
 const userRoutes= express.Router();
 
@@ -12,9 +12,9 @@ userRoutes.get('/read/allWithrates',  getAllWorkerss);
 
 userRoutes.get('/read/allWorker',  userController.getAllWorkers);
 
-userRoutes.get('/read/:id', verifyToken, checkRole(["admin"]),userController.getUserById);
+userRoutes.get('/read/:id',userController.getUserById);
 
 // userRoutes.put('update/:id', verifyToken, checkRole(["admin"]), userController.updateUserById)
 userRoutes.delete('/delete/:id', verifyToken, userController.deleteUserById)
-
+userRoutes.post('/filter',getByFilter)
 export default userRoutes
