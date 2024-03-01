@@ -20,7 +20,7 @@ const app=express()
 app.use(express.json());
 
 const corsOption={
-    origin:"http://localhost:3000",
+    origin:"*",
     credentials:true,
     optionsSuccessStatus:200
 }
