@@ -11,10 +11,12 @@ userRoutes.get('/read/all',  userController.getAllUsers);
 userRoutes.get('/read/allWithrates',  getAllWorkerss);
 
 userRoutes.get('/read/allWorker',  userController.getAllWorkers);
+userRoutes.get('/read/allUsers',  userController.getAllUserss);
+
 
 userRoutes.get('/read/:id',userController.getUserById);
 
 // userRoutes.put('update/:id', verifyToken, checkRole(["admin"]), userController.updateUserById)
-userRoutes.delete('/delete/:id', verifyToken, userController.deleteUserById)
+userRoutes.delete('/delete/:id', userController.deleteUserById)
 userRoutes.post('/filter',getByFilter)
 export default userRoutes

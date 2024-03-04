@@ -63,6 +63,14 @@ export const userController={
         }
       },
 
+      getAllUserss: async (req, res) => {
+        try {
+          const allUsers = await User.find({role:"user"}).populate("categoryId");
+          res.status(200).json(allUsers);
+        } catch (error) {
+          res.status(500).json({ message: error.message });
+        }
+      },
       getUserById: async (req, res) => {
         try {
           const user = await User.findById(req.params.id);
