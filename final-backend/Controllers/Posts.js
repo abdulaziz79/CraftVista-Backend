@@ -7,15 +7,12 @@ import Category from "../Models/Category.js"; // Import the Category model
 
 
 export const createPost = async (req, res) => {
+  console.log(req.body)
+  console.log("userrrr",req.user.userId)
     try {
       const { userId,description, location, categoryId } = req.body;
   
 
-      // const user = await User.findById(userId);
-
-      // if (!user) {
-      //   return res.status(404).json({ message: 'User not found' });
-      // }
   let img=null;
       if(req.file){
 img=req.file.path
@@ -24,7 +21,7 @@ img=req.file.path
         description,
         image: img,
         location,
-        userId,
+        userId:req.user.userId,
         categoryId
       })
         const savedPost = await newPost.save();
@@ -79,7 +76,7 @@ img=req.file.path
 
   export const getAllPosts = async (req, res)=>{
     try {
-      const users= await Posts.find().populate(["userId","categoryId"])
+      const users= await Posts.find().sort({createdAt:-1}).populate(["userId","categoryId"])
       if(users){
         res.status(200).json(users)
       }
@@ -174,7 +171,7 @@ export const getByFilter = async (req, res) => {
       });
     }
 
-    const posts = await Posts.aggregate(pipeline);
+    const posts = await Posts.aggregate(pipeline).sort({createdAt:-1});
     if (posts) {
       return res.status(200).json(posts);
     } else {

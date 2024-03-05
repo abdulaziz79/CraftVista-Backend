@@ -3,8 +3,10 @@ import User from "../Models/User.js";
 import mongoose from "mongoose";
 // Create rate
 export const createRate = async (req, res) => {
-    const { rated, rater, value } = req.body;
+    const { rated, value } = req.body;
+    const rater=req.user.userId
     console.log(req.body)
+    console.log("raterrr",rater)
     try {
         const rateExist=await Rate.findOne({rated:rated,rater:rater})
         if(rateExist){
