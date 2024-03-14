@@ -171,3 +171,25 @@ export const getByFilter = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+export const getTopRatedWorkers = async (req, res) => {
+  try {
+    const allUsers = await User.find({ role: "worker" }).populate("categoryId");
+
+    // Fetch average rate for each user
+    const usersWithAverageRate = await Promise.all(allUsers.map(async (user) => {
+      const averageRate = await getAverageRateForUser(user._id);
+      return { ...user.toJSON(), rate: averageRate.averageRating, number: averageRate.totalRatings };
+    }));
+
+    // Sort workers by average rating in descending order
+    const sortedWorkers = usersWithAverageRate.sort((a, b) => b.rate - a.rate);
+
+    // Select only the top five workers
+    const topRatedWorkers = sortedWorkers.slice(0, 5);
+
+    res.status(200).json(topRatedWorkers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
