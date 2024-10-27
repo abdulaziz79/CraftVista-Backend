@@ -20,7 +20,7 @@ const app=express()
 app.use(express.json());
 
 const corsOption={
-    origin:["http://localhost:3000","https://craft-vista.vercel.app"],
+    origin:["http://localhost:3000","https://craft-vista.vercel.app","https://hope-link-leb.vercel.app/"],
     credentials:true,
     optionsSuccessStatus:200
 }
